@@ -28,13 +28,16 @@
     
     <!--Main page-->
     <main class="flex-1 m-1">
+        <!--Button trip-->
         <div class="flex justify-between bg-[#FFB090] p-1 mb-3 mt-2">
+            <!--Sort Buttons-->
             <div>
                 <span class="inline-block align-middle">Sort By: </span>
                 <button class="inline-block align-middle">Title</button>
                 <button class="inline-block align-middle">Status</button>
                 <button class="inline-block align-middle">Genre</button>
             </div>
+
             <button class="rounded-lg bg-[#CA5995] text-white hover:bg-[#5D1C6A] p-1">Add Book</button>
         </div>
         <!--Book Grid-->
@@ -45,7 +48,8 @@
                 <div class="p-2 bg-white">
                     <h2 class="text-[#5D1C6A] font-bold">Book title</h2>
                     <p class="text-[#2D1040]">Author's Name: John Doe</p>
-                    <p class="text-[#9E8FA0] text-sm mb-4">Genre: Science Fiction</p>
+                    <p class="text-[#2D1040]">Genre: Science Fiction</p>
+                    <p class="text-[#9E8FA0] text-sm mb-2 mt-2">Note: This is an example note for any notes you want to add to a books, it's optional</p>
                     <button class="text-[#CA5995]">View</button>
                     <button>Edit</button>
                     <button class="text-[#C94040]">Delete</button>
@@ -54,5 +58,70 @@
             </article>
         </div>
     </main>
+
+    <!--Adding Book Form-->
+    <div class="hidden fixed inset-0 flex items-center justify-center">
+        <!--Darken Screen Overlay-->
+        <div class="absolute inset-0 bg-[#5D1C6A] opacity-50"></div>
+
+        <!--Book Card Form-->
+        <div class="p-4 w-1/3 relative z-10 bg-white">
+            <h1 class="text-[#5D1C6A] text-center text-2xl font-bold">Add a new Book</h1>
+            <hr class="w-2/3 mx-auto border-t border-[#5D1C6A]">
+            <form name="addBook" action="#">
+                <table class="my-5 flex justify-center border-separate border-spacing-2 [&_td:first-child]:text-right">
+                    <tr>
+                        <td><lable for="book-title" class="text-[#2D1040]">Title:</lable></td>
+                        <td><input id="book-title" type="text" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg"></td>
+                    </tr>
+                    <tr>
+                        <td><lable for="book-author" class="text-[#2D1040]">Author:</lable></td>
+                        <td><input id="book-author" type="text" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg"></td>
+                    </tr>
+                    <tr>
+                        <td><lable for="book-genre" class="text-[#2D1040]">Genre:</lable></td>
+                        <td>
+                            <select name="genres" id="book-genre" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none pl-2 rounded-lg">
+                                <option value=" ">--Select a Genere--</option>
+                                <optgroup label="Fiction">
+                                    <option value="action-adventure">Action & Adventure</option>
+                                    <option value="contemporary">Contemporary</option>
+                                    <option value="dystopian">Dystopian</option>
+                                    <option value="fantasy">Fantasy</option>
+                                    <option value="historical-fiction">Historical Fiction</option>
+                                    <option value="horror">Horror</option>
+                                    <option value="mystery">Mystery</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="sci-fi">Science Fiction</option>
+                                    <option value="thriller">Thriller</option>
+                                </optgroup>
+                                <optgroup label="Non-Fiction">
+                                    <option value="art-photography">Art & Photography</option>
+                                    <option value="biography-autobiography">Biography & Autobiography</option>
+                                    <option value="history">History</option>
+                                    <option value="memoir">Memoir</option>
+                                    <option value="self-help">Self-Help</option>
+                                    <option value="true-crime">True Crime</option>
+                                </optgroup>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="text-[#9E8FA0]">(Optional) &nbsp</span><lable for="book-note" class="text-[#2D1040]">Note:</lable></td>
+                        <td><input id="book-note" type="text" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg"></td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+                <div class="flex justify-center">
+                    <button type="submit" class="mx-2 px-1 bg-[#CA5995] text-white hover:bg-[#5D1C6A] rounded-lg">Submit</button>
+                    <button type="reset" class="mx-2 px-1 border border-[#CA5995] text-[#CA5995] hover:bg-[#CA5995] hover:text-white rounded-lg">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
