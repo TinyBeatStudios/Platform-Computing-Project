@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Library</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 </head>
 <body class="bg-[#FFF1D3]">
     <!-- Nav Bar -->    
@@ -21,8 +22,8 @@
 
         <!--Login/Signup Button-->
         <div>
-            <button class="px-1 bg-[#CA5995] text-[#FFF1D3] rounded-full hover:bg-[#FFF1D3] hover:text-[#5D1C6A]">Login</button>
-            <button class="px-1 bg-[#CA5995] text-[#FFF1D3] rounded-full hover:bg-[#FFF1D3] hover:text-[#5D1C6A]">Sign Up</button>
+            <button class="px-1 bg-[#CA5995] text-[#FFF1D3] rounded-lg hover:bg-[#FFF1D3] hover:text-[#5D1C6A]">Login</button>
+            <button class="px-1 bg-[#CA5995] text-[#FFF1D3] rounded-lg hover:bg-[#FFF1D3] hover:text-[#5D1C6A]">Sign Up</button>
         </div>
     </nav>
     
@@ -38,37 +39,29 @@
                 <button class="inline-block align-middle">Genre</button>
             </div>
 
-            <button class="rounded-lg bg-[#CA5995] text-white hover:bg-[#5D1C6A] p-1">Add Book</button>
+            <button id="add-book-btn" class="rounded-lg bg-[#CA5995] text-white hover:bg-[#5D1C6A] px-1">Add Book</button>
         </div>
         <!--Book Grid-->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"> 
-            <!--Book Cards-->
-            <article class="bg-white shadow-md hover:-translate-y-1 hover:shadow-lg transition-transform">
-                <div class="m-2 h-48 bg-[#FFB090] rounded-t-lg overflow-hidden"></div>
-                <div class="p-2 bg-white">
-                    <h2 class="text-[#5D1C6A] font-bold">Book title</h2>
-                    <p class="text-[#2D1040]">Author's Name: John Doe</p>
-                    <p class="text-[#2D1040]">Genre: Science Fiction</p>
-                    <p class="text-[#9E8FA0] text-sm mb-2 mt-2">Note: This is an example note for any notes you want to add to a books, it's optional</p>
-                    <button class="text-[#CA5995]">View</button>
-                    <button>Edit</button>
-                    <button class="text-[#C94040]">Delete</button>
-                    <span class="rounded-full px-2 py-0.5 mt-6 text-sm font-medium bg-[#FFF1D3] text-[#9E8FA0] border border-[#9E8FA0]">Unread</span>
+        <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!--Add Book Tooltip (Hidden when a book is added)-->
+            <article id="tooltip" class="opacity-50 bg-gray-200 h-80 flex items-center justify-center shadow-md hover:-translate-y-1 hover:shadow-lg transition-transform border">
+                <div class="mx-auto my-auto text-gray-800 italic">
+                    Add Books to your Collection to see them here!
                 </div>
             </article>
         </div>
     </main>
 
     <!--Adding Book Form-->
-    <div class="hidden fixed inset-0 flex items-center justify-center">
+    <div id="add-book-modal" class="hidden fixed inset-0 flex items-center justify-center">
         <!--Darken Screen Overlay-->
-        <div class="absolute inset-0 bg-[#5D1C6A] opacity-50"></div>
+        <div id="modal-overlay" class="absolute inset-0 bg-[#5D1C6A] opacity-50"></div>
 
         <!--Book Card Form-->
         <div class="p-4 w-1/3 relative z-10 bg-white">
-            <h1 class="text-[#5D1C6A] text-center text-2xl font-bold">Add a new Book</h1>
+            <h1 id="modal-title" class="text-[#5D1C6A] text-center text-2xl font-bold"></h1>
             <hr class="w-2/3 mx-auto border-t border-[#5D1C6A]">
-            <form name="addBook" action="#">
+            <form id="add-book-form" action="#">
                 <table class="my-5 flex justify-center border-separate border-spacing-2 [&_td:first-child]:text-right">
                     <tr>
                         <td><lable for="book-title" class="text-[#2D1040]">Title:</lable></td>
@@ -84,44 +77,101 @@
                             <select name="genres" id="book-genre" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none pl-2 rounded-lg">
                                 <option value=" ">--Select a Genere--</option>
                                 <optgroup label="Fiction">
-                                    <option value="action-adventure">Action & Adventure</option>
-                                    <option value="contemporary">Contemporary</option>
-                                    <option value="dystopian">Dystopian</option>
-                                    <option value="fantasy">Fantasy</option>
-                                    <option value="historical-fiction">Historical Fiction</option>
-                                    <option value="horror">Horror</option>
-                                    <option value="mystery">Mystery</option>
-                                    <option value="romance">Romance</option>
-                                    <option value="sci-fi">Science Fiction</option>
-                                    <option value="thriller">Thriller</option>
+                                    <option value="Action & Adventure">Action & Adventure</option>
+                                    <option value="Contemporary">Contemporary</option>
+                                    <option value="Dystopian">Dystopian</option>
+                                    <option value="Fantasy">Fantasy</option>
+                                    <option value="Historical fiction">Historical Fiction</option>
+                                    <option value="Horror">Horror</option>
+                                    <option value="Mystery">Mystery</option>
+                                    <option value="Romance">Romance</option>
+                                    <option value="Science Fiction">Science Fiction</option>
+                                    <option value="Thriller">Thriller</option>
                                 </optgroup>
                                 <optgroup label="Non-Fiction">
-                                    <option value="art-photography">Art & Photography</option>
-                                    <option value="biography-autobiography">Biography & Autobiography</option>
-                                    <option value="history">History</option>
-                                    <option value="memoir">Memoir</option>
-                                    <option value="self-help">Self-Help</option>
-                                    <option value="true-crime">True Crime</option>
+                                    <option value="Art & Photography">Art & Photography</option>
+                                    <option value="Biography & Autobiography">Biography & Autobiography</option>
+                                    <option value="History">History</option>
+                                    <option value="Memoir">Memoir</option>
+                                    <option value="Self Help">Self-Help</option>
+                                    <option value="True Crime">True Crime</option>
                                 </optgroup>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <td><span class="text-[#9E8FA0]">(Optional) &nbsp</span><lable for="book-note" class="text-[#2D1040]">Note:</lable></td>
-                        <td><input id="book-note" type="text" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg"></td>
+                        <td><label for="book-status" class="text-[#2D1040]">Read Status:</label></td>
+                        <td>
+                            <select name="statuses" id="book-status" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none pl-2 rounded-lg">
+                                <option value=" ">--Choose a Genere--</option>
+                                <option value="Read">Read</option>
+                                <option value="In-Progress">In-Progress</option>
+                                <option value="Unread">Unread</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
-                        <td> </td>
-                        <td></td>
-                        <td></td>
+                        <td><label for="book-pages" class="text-[#2D1040]"># of Pages:</label></td>
+                        <td><input id="book-pages" type="text" class="numbers-only border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg"></td>
+                    </tr>
+                    <tr>
+                        <td><span class="text-[#9E8FA0]">(Optional) &nbsp;</span><label for="book-notes" class="text-[#2D1040]">Notes:</label></td>
+                        <td><textarea id="book-notes" rows="5" cols="40" class="border border-[#FFB090] focus:border-[#CA5995] focus:outline-none rounded-lg" placeholder="Enter your notes here..."></textarea></td>
                     </tr>
                 </table>
                 <div class="flex justify-center">
-                    <button type="submit" class="mx-2 px-1 bg-[#CA5995] text-white hover:bg-[#5D1C6A] rounded-lg">Submit</button>
-                    <button type="reset" class="mx-2 px-1 border border-[#CA5995] text-[#CA5995] hover:bg-[#CA5995] hover:text-white rounded-lg">Cancel</button>
+                    <button id="modal-submit-btn" type="submit" class="mx-2 px-1 bg-[#CA5995] text-white hover:bg-[#5D1C6A] rounded-lg"></button>
+                    <button id="modal-cancel-btn" type="reset" class="mx-2 px-1 border border-[#CA5995] text-[#CA5995] hover:bg-[#CA5995] hover:text-white rounded-lg">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
+    
+    <!--Book View Panel-->
+    <div id="book-view-panel" class="hidden fixed top-0 right-0 h-full w-96 rounded-sm bg-white shadow-2xl z-50 overflow-y-auto">
+    
+        <div class="bg-[#5D1C6A] px-4 pb-4 pt-2">
+            <button id="close-view-panel" class="text-[#FFF1D3] float-right text-xl cursor-pointer">✕</button>
+            <div id="view-book-cover" class="h-48 bg-[#FFB090] rounded-lg mt-8"></div>
+        </div>
+
+        <div class="p-6">
+            <span id="view-status-badge" class="rounded-full px-3 py-1 text-sm font-medium"></span>
+            <h2 id="view-title" class="text-[#5D1C6A] text-2xl font-bold mt-4"></h2>
+            <p id="view-author" class="text-[#2D1040] text-lg"></p>
+            <p id="view-genre" class="text-[#9E8FA0] text-sm mt-1"></p>
+            
+            <hr class="border-[#FFB090] my-4">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[#9E8FA0] text-xs uppercase tracking-wide">Pages</p>
+                    <p id="view-pages" class="text-[#2D1040] font-semibold"></p>
+                </div>
+                <div>
+                    <p class="text-[#9E8FA0] text-xs uppercase tracking-wide">Date Added</p>
+                    <p id="view-date" class="text-[#2D1040] font-semibold"></p>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <p class="text-[#9E8FA0] text-xs uppercase tracking-wide mb-2">Your Notes</p>
+                <p id="view-notes" class="text-[#2D1040] break-normal"></p>
+            </div>
+
+            <div class="mt-8 flex gap-3">
+                <button id="view-edit-btn" class="flex-1 bg-[#CA5995] text-white py-2 rounded-lg hover:bg-[#5D1C6A] cursor-pointer">
+                    Edit Book
+                </button>
+                <button id="view-delete-btn" class="bg-[#C94040] text-white px-4 py-2 rounded-lg hover:bg-[#A33232] cursor-pointer">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay behind panel -->
+    <div id="view-overlay" class="hidden fixed inset-0 bg-[#5D1C6A] opacity-30 z-40"></div>
+    <script src="JS/main.js"></script>
 </body>
 </html>
