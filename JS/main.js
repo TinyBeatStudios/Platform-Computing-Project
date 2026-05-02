@@ -1,6 +1,14 @@
+// Current Books Array
+let books = [];
+let seachTerm = '';
+
 $(document).ready(function() {
-    // Current Books Array
-    let books = [];
+
+    //Handle Seach bar input
+    $('#search-input').on('input', function() {
+        seachTerm = $(this).val().trim();
+        sortAndRender();
+    });
 
     // Handle Opening/Closing Add-Book Modal
     $('#add-book-btn').on('click', function(){
@@ -135,6 +143,11 @@ $(document).ready(function() {
         card.remove();
     });
 
+    //Handles sorting book cards
+    $('#sort-select').on('change', function() {
+        sortAndRender();
+    });
+
     //Prevents typing letters for inputting book pages    
     $('.numbers-only').on('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
@@ -142,8 +155,53 @@ $(document).ready(function() {
 
 });
 
-// -- Helper Functions --
+// -- Main Functions --
+function sortAndRender() {
+    const sortValue = $('#sort-select').val();
+    let booksToShow = books;
 
+    if (booksToShow.length === 0) {
+        return;
+    }
+
+    if (seachTerm != '') {
+        const term = seachTerm.toLowerCase();
+
+        booksToShow = booksToShow.filter(function(book) {
+            return book.title.toLowerCase().includes(term)
+                || book.author.toLowerCase().includes(term)
+                || book.genre.toLowerCase().includes(term);
+        });
+    }
+
+    booksToShow.sort(function(a, b) {
+        switch(sortValue) {
+            case 'title-asc':
+                return a.title.localeCompare(b.title);
+            case 'title-desc':
+                return b.title.localeCompare(a.title);
+            case 'author-asc':
+                return a.author.localeCompare(b.author);
+            case 'genre-asc':
+                return a.genre.localeCompare(b.genre);
+            case 'pages-asc':
+                return (a.pages) - (b.pages);
+            case 'pages-desc':
+                return (b.pages) - (a.pages);
+            case 'date-asc':
+                return a.id - b.id;
+            case 'date-desc':
+            default:
+                return b.id - a.id;
+        }
+    });
+
+    $('#book-grid').empty();
+
+    books.forEach(book => {
+        $('#book-grid').append(generateCard(book));
+    });
+}
 // Genreate Book Cards
 function generateCard(book) {
     // Determine badge color based on status
@@ -277,3 +335,5 @@ function validate(book) {
 
     return status;
 }
+
+// Helper Functions

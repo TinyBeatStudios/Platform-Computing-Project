@@ -30,16 +30,38 @@
     <!--Main page-->
     <main class="flex-1 m-1">
         <!--Button trip-->
-        <div class="flex justify-between bg-[#FFB090] p-1 mb-3 mt-2">
+        <div class="relative flex items-center bg-[#FFB090] p-1 mb-3 mt-2">
             <!--Sort Buttons-->
-            <div>
-                <span class="inline-block align-middle">Sort By: </span>
-                <button class="inline-block align-middle">Title</button>
-                <button class="inline-block align-middle">Status</button>
-                <button class="inline-block align-middle">Genre</button>
+            <div class="flex items-center gap-2">
+                <span class="pt-0.5 text-[#5D1C6A] text-xs text-center uppercase tracking-widest">Sort By: </span>
+                <select id="sort-select" class="w-full bg-[#FFF1D3] border border-[#CA5995] text-[#5D1C6A] rounded-lg px-3 py-2 text-sm">
+                    <option value="date-desc">Date Added (Newest)</option>
+                    <option value="date-asc">Date Added (Oldest)</option>
+                    <option value="title-asc">Title (A-Z)</option>
+                    <option value="title-desc">Title (Z-A)</option>
+                    <option value="author-asc">Author (A-Z)</option>
+                    <option value="genre-asc">Genre (A-Z)</option>
+                    <option value="pages-asc">Pages (Shortest)</option>
+                    <option value="pages-desc">Pages (Longest)</option>
+                </select>
             </div>
 
-            <button id="add-book-btn" class="rounded-lg bg-[#CA5995] text-white hover:bg-[#5D1C6A] px-1">Add Book</button>
+            <!--Seach Bar-->
+            <div class="absolute left-1/2 -translate-x-1/2">
+                <div class="relative">
+                    <input id="search-input" type="text" placeholder="Seach your Library..." 
+                    class="bg-[#FFF1D3] bg-opacity-20 text-[#5D1C6A] placeholder-[#FFB090] 
+                        border border-[#CA5995] rounded-full px-4 py-2 pr-10 text-sm
+                        focus:outline-none focus:bg-opacity-30 w-64">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[#FFB090]">🔍</span>
+                </div>
+            </div>
+
+            <!-- Add Book Button-->
+            <div class="ml-auto">
+                <button id="add-book-btn" class="rounded-lg bg-[#CA5995] text-white hover:bg-[#5D1C6A] p-1">Add Book</button>
+            </div>
+            
         </div>
         <!--Book Grid-->
         <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
