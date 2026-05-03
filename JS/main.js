@@ -1,13 +1,22 @@
 // Current Books Array
 let books = [];
-let seachTerm = '';
 
+let searchTerm = '';
+let searchTimeout = null;
+
+// Ready Function
 $(document).ready(function() {
 
-    //Handle Seach bar input
+    //Handle Search bar input, delayed book search
     $('#search-input').on('input', function() {
-        seachTerm = $(this).val().trim();
-        sortAndRender();
+        clearTimeout(searchTimeout);
+
+        value = $(this).val().trim().toLowerCase();
+
+        searchTimeout = setTimeout(function() {
+            searchTerm = value;
+            sortAndRender();
+        }, 300);
     });
 
     // Handle Opening/Closing Add-Book Modal
@@ -69,6 +78,7 @@ $(document).ready(function() {
         bookData.id = Date.now();
         books.push(bookData);
         $('#book-grid').append(generateCard(bookData));
+        showToast('Card Added! :D', 'success')
 
         } else if (mode === 'edit') {
         const editingId = $('#add-book-modal').data('editing-id');
@@ -83,6 +93,8 @@ $(document).ready(function() {
         // replaceWith() swaps an element with new content entirely.
         // The selector uses an attribute selector — the same syntax as CSS.
         }
+
+        showToast('Card Edited', 'info ')
 
         // Reset the form fields and close
         $('#add-book-form')[0].reset();
@@ -141,6 +153,7 @@ $(document).ready(function() {
 
         //remove card from grid
         card.remove();
+        showToast('Card Deleted D:', 'success');
     });
 
     //Handles sorting book cards
@@ -155,7 +168,7 @@ $(document).ready(function() {
 
 });
 
-// -- Main Functions --
+// -- Primary Functions --
 function sortAndRender() {
     const sortValue = $('#sort-select').val();
     let booksToShow = books;
@@ -164,8 +177,9 @@ function sortAndRender() {
         return;
     }
 
-    if (seachTerm != '') {
-        const term = seachTerm.toLowerCase();
+    if (searchTerm != '') {
+        console.log('not empty')
+        const term = searchTerm;
 
         booksToShow = booksToShow.filter(function(book) {
             return book.title.toLowerCase().includes(term)
@@ -198,7 +212,7 @@ function sortAndRender() {
 
     $('#book-grid').empty();
 
-    books.forEach(book => {
+    booksToShow.forEach(book => {
         $('#book-grid').append(generateCard(book));
     });
 }
@@ -227,7 +241,7 @@ function generateCard(book) {
                     <button class="btn-view cursor-pointer text-[#CA5995]">View</button>
                     <button class="btn-edit cursor-pointer">Edit</button>
                     <button class="btn-delete cursor-pointer text-[#C94040]">Delete</button>
-                    <span class="rounded-full px-2 py-0.5 mt-6 text-sm font-medium ${badgeClasses}}">${book.status}</span>
+                    <span class="rounded-full px-2 py-0.5 mt-6 text-sm font-medium ${badgeClasses}">${book.status}</span>
                 </div>
             </div>
         </article>
@@ -330,10 +344,42 @@ function validate(book) {
     } 
 
     if (alertText.length > 0) {
-        alert(alertText);
+        showToast(alertText, 'error');
     }
 
     return status;
+}
+
+// Toaster Notif handler
+function showToast(message, type) {
+    // type is 'success', 'error', or 'info'
+    const colors = {
+        success: 'bg-[#5C9E74] text-white',
+        error: 'bg-[#C94040] text-white',
+        info: 'bg-[#5D1C6A] text-white'
+    };
+
+    const toast = $(`
+        <div class="toast ${colors[type] || colors.info} px-5 py-3 rounded-xl shadow-lg text-sm font-medium opacity-0 transition-opacity duration-300">
+            ${message}
+        </div>
+    `);
+
+    $('#toast-container').append(toast);
+    
+    // Fade in
+    setTimeout(function() {
+        toast.css('opacity', '1');
+    }, 10);
+
+    // Fade out and remove after 3 seconds
+    setTimeout(function() {
+        toast.css('opacity', '0');
+        setTimeout(function() {
+            toast.remove();
+        }, 300);
+        // Wait for the fade-out transition to finish before removing from DOM
+    }, 3000);
 }
 
 // Helper Functions
