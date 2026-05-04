@@ -32,7 +32,7 @@
     
         <!--Button strip-->
         <div class="relative flex items-center bg-[#FFB090] p-1 mb-3 mt-2">
-            <!--Sort Buttons-->
+            <!--Sort Dropdowm-->
             <div class="flex items-center gap-2">
                 <span class="pt-0.5 text-[#5D1C6A] text-xs text-center uppercase tracking-widest">Sort By: </span>
                 <select id="sort-select" class="w-full bg-[#FFF1D3] border border-[#CA5995] text-[#5D1C6A] rounded-lg px-3 py-2 text-sm">
@@ -45,6 +45,12 @@
                     <option value="pages-asc">Pages (Shortest)</option>
                     <option value="pages-desc">Pages (Longest)</option>
                 </select>
+            </div>
+
+            <!--Collection Switcher-->
+            <div class="flex gap-1 ml-4">
+                <button id="tab-collection" class="px-3 py-1.5 text-sm rounded-lg bg-[#5D1C6A] text-[#FFF1D3] font-medium transition-colors">My Collection</button>
+                <button id="tab-wishlist" class="px-3 py-1.5 text-sm rounded-lg text-[#5D1C6A] hover:bg-[#5D1C6A] hover:text-[#FFF1D3] font-medium transition-colors">Wishlist</button>
             </div>
 
             <!--Seach Bar-->
