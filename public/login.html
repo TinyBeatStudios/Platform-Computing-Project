@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <style>
+        /* The card slides up and fades in when the page loads */
+        .auth-card {
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(24px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        /* Smooth glow on input focus */
+        .form-input {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(202, 89, 149, 0.15);
+        }
+
+        /* Red highlight on invalid fields */
+        .field-error {
+            border-color: #C94040 !important;
+            box-shadow: 0 0 0 3px rgba(201, 64, 64, 0.1) !important;
+        }
+    </style>
+</head>
+<body class="bg-[#FFF1D3] min-h-screen flex items-center justify-center px-4">
+
+    <div class="auth-card bg-white rounded-2xl shadow-xl w-full max-w-md p-10">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-[#5D1C6A] text-3xl font-bold">Welcome Back</h1>
+            <p class="text-[#9E8FA0] mt-2 text-sm">Sign in to access your library ;D</p>
+        </div>
+
+        <!-- Error message box -->
+        <div id="error-box" class="hidden bg-red-50 border border-[#C94040] text-[#C94040] rounded-xl px-4 py-3 mb-5 text-sm leading-relaxed"></div>
+
+        <!-- Email field -->
+        <div class="mb-4">
+            <label for="email" class="block text-[#2D1040] text-sm font-medium mb-1">Email Address</label>
+            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] placeholder-[#9E8FA0] focus:outline-none focus:border-[#CA5995]">
+        </div>
+
+        <!-- Password field -->
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-1">
+                <label for="password" class="text-[#2D1040] text-sm font-medium">Password</label>
+            </div>
+            <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] focus:outline-none focus:border-[#CA5995]">
+        </div>
+
+        <!-- Submit button -->
+        <button id="login-btn" class="w-full bg-[#CA5995] text-white py-3 rounded-xl font-semibold hover:bg-[#5D1C6A] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"> Sign In </button>
+
+        <!-- Link to signup -->
+        <p class="text-center text-[#9E8FA0] text-sm mt-6">
+            New user?
+            <a href="signup.html" class="text-[#CA5995] hover:text-[#5D1C6A] font-medium transition-colors"> Create an Account! </a>
+        </p>
+
+    </div>
+
+    <script src="JS/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library — Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-[#FFF1D3] text-[#2D1040] min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="p-2 m-1 flex flex-col sm:flex-row items-center justify-between gap-2 bg-[#5D1C6A] text-[#FFF1D3]">
+        <div><img src="Assets/logo.png"></div>
+        
+        <!--Nav Links-->
+        <div class="my-auto flex gap-6">
+            <a href="home.html" class="hover:text-[#FFB090]">Home</a>
+            <a href="index.html" class="hover:text-[#FFB090]">My Collection</a>
+            <a href="about.html" class="hover:text-[#FFB090]">About Us</a>
+        </div>
+
+        <!--Login Buttons-->
+        <div class="my-auto flex gap-2">
+            <a href="login.html" class="px-2 py-0.5 border border-[#FFB090] text-[#FFB090] rounded-lg text-sm hover:bg-[#FFB090] hover:text-[#5D1C6A]">Login</a>
+            <a href="signup.html" class="px-2 py-0.5 bg-[#CA5995] text-white rounded-lg text-sm hover:bg-[#FFF1D3] hover:text-[#5D1C6A]">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- Hook Presentation -->
+    <div class="flex flex-col items-center justify-center text-center py-24 px-6">
+        <p class="text-[#9E8FA0] text-sm uppercase tracking-widest mb-3">Your very own Personal Library!!</p>
+        <h1 class="text-3xl sm:text-5xl font-bold text-[#5D1C6A] mb-4">Track all the Books You Own!</h1>
+        <p class="text-[#9E8FA0] max-w-md mb-8 leading-relaxed">Add books to your collection, track your reading status, write notes, or build a wishlist! It's all saved to your account! :D</p>
+        <div class="flex gap-3">
+            <a href="index.html" class="px-6 py-2.5 bg-[#CA5995] text-white rounded-lg hover:bg-[#5D1C6A] transition-colors">Open My Collection</a>
+            <p class="my-auto text-[#9E8FA0]">Orrrrrrrrr</p>
+            <a href="signup.html" class="px-6 py-2.5 border border-[#CA5995] text-[#CA5995] rounded-lg hover:bg-[#CA5995] hover:text-white transition-colors">Create an Account!</a>
+        </div>
+    </div>
+
+    <hr class="border-[#FFB090] mx-8">
+
+    <!-- Features Things-->
+    <div class="py-16 px-8">
+        <h2 class="text-2xl font-bold text-[#5D1C6A] text-center mb-10">What You Can Do:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">1.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Track Your Collection :)</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Keep track of every book you own with title, author, genre, and page count!</p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">2.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Search Book Online :O</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Search Google Books and auto-fill your book details with one click!</p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">3.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Mark Reading Status ;D</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Mark books as Read, In Progress, or Unread as you go</p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">4.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Wishlist ^^</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Star books you want to read next and browse your wishlist separately</p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">5.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Personal Notes O:</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Add your own thoughts and notes to any book in your collection</p>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <p class="text-2xl mb-3">6.</p>
+                <h3 class="text-[#5D1C6A] font-semibold mb-1">Have an Account! >:D</h3>
+                <p class="text-[#9E8FA0] text-sm leading-relaxed">Sign up once and your library is saved and waiting every time you return!</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-auto bg-[#5D1C6A] text-[#FFF1D3] text-center text-sm py-4">
+        Built by <a href="about.html" class="text-[#FFB090] hover:underline">Carlos, Charley, and Juan</a>
+    </div>
+
+</body>
+</html>

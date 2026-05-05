@@ -1,15 +1,32 @@
 // Current Books Array
 let books = [];
-loadBooks();
-
 let searchTerm = '';
 let currCollection = 'collection';
 let searchTimeout = null;
 
-sortAndRender();
-
 // Ready Function
 $(document).ready(function() {
+    // Check the server for a valid session.
+    let currentUser = null;
+
+    $.ajax({
+        url: '/auth/me',
+        method: 'GET',
+        async: false,
+        
+        success: function(user) {
+            currentUser = user;
+            $('#user-greeting').text('Hi, ' + user.name + '!');
+        },
+        error: function() {
+            // No valid session — redirect to login
+            window.location.href = 'login.html';
+        }
+    });
+
+    if (!currentUser) return;
+
+    loadBooks();
 
     //Handle Search bar input, delayed book search
     $('#search-input').on('input', function() {
@@ -278,8 +295,14 @@ $(document).ready(function() {
         const bookId = card.data('id');
         const book = books.find(function(b) { return b.id === bookId; });
         
-        book.wishlist = !book.wishlist;
-        
+        console.log(book.wishlist);
+        if (book.wishlist === 1) {
+            book.wishlist = 0;
+        } else {
+            book.wishlist = 1;
+        }
+        console.log(book.wishlist);
+
         // Update the button icon
         $(this).text(book.wishlist ? '★' : '☆');
         $(this).attr('title', book.wishlist ? 'Remove from wishlist' : 'Add to wishlist');
@@ -305,6 +328,23 @@ $(document).ready(function() {
         });
     });
 
+    // Handles Sign out button
+    $('#signout-btn').on('click', function() {
+        $.ajax({
+            url: '/auth/logout',
+            method: 'POST',
+            success: function() {
+                sessionStorage.removeItem('libraryUser');
+                window.location.href = 'login.html';
+            },
+            error: function() {
+                // Even if the server call fails, clear locally and redirect
+                sessionStorage.removeItem('libraryUser');
+                window.location.href = 'login.html';
+            }
+        });
+    });
+
     //Handles sorting book cards
     $('#sort-select').on('change', function() {
         sortAndRender();
@@ -323,9 +363,9 @@ function sortAndRender() {
     let booksToShow = books;
 
     if (currCollection === 'wishlist') {
-        booksToShow = booksToShow.filter(function(book) { return book.wishlist === true; });
+        booksToShow = booksToShow.filter(function(book) { return book.wishlist === 1; });
     } else {
-        booksToShow = booksToShow.filter(function(book) { return book.wishlist === false; });
+        booksToShow = booksToShow.filter(function(book) { return book.wishlist === 0; });
     }
 
     if (booksToShow.length == 0) {
@@ -534,7 +574,8 @@ function runBookSearch() {
         data: {
             q: query,
             maxResults: 8,
-            printType: 'books'
+            printType: 'books',
+            key: 'AIzaSyDfKWb2FAHzPu5-gbVRprL5XvK9dNhcQzA'
             // URL query parameters: ?q=Dune&maxResults=8&printType=books
         },
         success: function(response) {
@@ -660,11 +701,7 @@ function loadBooks() {
                 return;
             }
             
-            // Hide the tooltip and render all loaded books
-            $('#tooltip').addClass('hidden');
-            books.forEach(function(book) {
-                $('#book-grid').append(generateCard(book));
-            });
+            sortAndRender();
         },
         error: function(xhr) {
             showToast('Could not load your books. Is the server running?', 'error');

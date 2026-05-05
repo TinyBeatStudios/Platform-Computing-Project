@@ -1,152 +1,311 @@
-// Import installed packages
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+const path = require('path');
 
-const app = express();    
-const PORT = 3000;        
+const app = express();
+const PORT = 3000;
 
-// Allows AJAX JQuery requests
-app.use(cors());
+// Database Connection Pool
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'Library2026!',
+    database: 'library_app',
+    waitForConnections: true,    
+    connectionLimit: 10,    
+    queueLimit: 0
+});
 
-// Allows JSON to JS use
+
+
+app.use(cors({
+    // Only allow requests from own server's origin.
+    origin: 'http://localhost:3000',
+    
+    // Allows use of session cookies with AJAX Queries
+    credentials: true
+    
+}));
+
 app.use(express.json());
 
-// Provides public folder files to browser
-app.use(express.static('public'));
+app.get('/', function(req, res) {
+    res.redirect('/home.html');
+});
 
-//Data file paths
-const BOOKS_FILE = path.join(__dirname, 'data', 'books.json');
-const USERS_FILE = path.join(__dirname, 'data', 'users.json');
+// Serves HTML, CSS, and JS files from the public/ folder.
+app.use(express.static('public', { index: false }));
 
-// Helper functions for reading/writing data files
+app.use(session({
+    // Verifies session cookies
+    secret: 'library-app-secret-key-change-this-in-production',
+    
+    // Don't save the session back to the store if it wasn't modified.
+    resave: false,
 
-function readJSON(filePath) {
-    try {
-        // reads the file and returns its contents as a string.
-        const content = fs.readFileSync(filePath, 'utf8');
+    // Don't create a session for requests that don't need one
+    saveUninitialized: false,
+    
+    cookie: {
+        secure: false,
         
-        // Converts a JSON string to JS object or array.
-        return JSON.parse(content);
-    } catch (error) {
-        return [];
+        // How long the session cookie lasts, in milliseconds, set to 1 week
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
+}));
+
+
+
+// Checks if the user is logged in and rejects the request if not.
+function requireAuth(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'You must be logged in.' });
+    }
+    next();
 }
-
-function writeJSON(filePath, data) {
-    //  converts a JS array/object back to JSON string and string to the file, replacing previous content.
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-}
-
-// req = request (what the browser sent)
-// res = response (what you send back)
-
-// GET /books — return all books
-app.get('/books', function(req, res) {
-    const books = readJSON(BOOKS_FILE);
-    res.json(books);
-});
-
-// POST /books — save a new book
-app.post('/books', function(req, res) {
-    const books = readJSON(BOOKS_FILE);
-    const newBook = req.body;
-
-    newBook.id = Date.now();
-
-    books.push(newBook);
-    writeJSON(BOOKS_FILE, books);
-    
-    res.status(201).json(newBook);
-});
-
-// PUT /books/:id — update an existing book
-app.put('/books/:id', function(req, res) {
-    // extracts the :id part from the URL
-    let books = readJSON(BOOKS_FILE);
-    const bookId = Number(req.params.id);
-    
-    const index = books.findIndex(function(b) { return b.id === bookId; });
-    
-    if (index === -1) {
-        return res.status(404).json({ error: 'Book not found' });
-    }
-    
-    // overwrites its properties with the new data keeps the original id
-    books[index] = { ...books[index], ...req.body, id: bookId };
-
-    writeJSON(BOOKS_FILE, books);
-    res.json(books[index]);
-});
-
-// DELETE /books/:id — remove a book
-app.delete('/books/:id', function(req, res) {
-    let books = readJSON(BOOKS_FILE);
-    const bookId = Number(req.params.id);
-    
-    // returns a new array excluding the book with the matching id.
-    const filtered = books.filter(function(b) { return b.id !== bookId; });
-    
-    if (filtered.length === books.length) {
-        return res.status(404).json({ error: 'Book not found' });
-    }
-    
-    writeJSON(BOOKS_FILE, filtered);
-    res.json({ message: 'Deleted successfully' });
-});
 
 // POST /auth/signup — create a new user account
 app.post('/auth/signup', async function(req, res) {
     
-    // extracts email, password, name from req.body into separate variables.
-    const users = readJSON(USERS_FILE);
-    const { email, password, name } = req.body;
-    
-    // Check if this email is already registered
-    const existingUser = users.find(function(u) { return u.email === email; });
-    if (existingUser) {
-        return res.status(400).json({ error: 'An account with this email already exists.' });
+    try {
+        // Destructuring: pulls name, email, password out of req.body
+        const { name, email, password } = req.body;
+
+        // Server-side validation 
+        if (!name || name.trim().length < 1) {
+            return res.status(400).json({ error: 'Name is required.' });
+        }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ error: 'A valid email is required.' });
+        }
+        if (!password || password.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+        }
+
+        // Check if this email is already registered
+        const [existingRows] = await db.execute(
+            'SELECT id FROM users WHERE email = ?',
+            [email]
+        );
+        
+        if (existingRows.length > 0) {
+            return res.status(400).json({ error: 'An account with this email already exists.' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 12);
+        
+        // Insert the new user into the database
+        const [result] = await db.execute(
+            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+            [name.trim(), email.toLowerCase(), hashedPassword]
+        );
+        
+        // Set up the session — the user is now logged in
+        req.session.userId = result.insertId;
+        req.session.userName = name.trim();
+        req.session.userEmail = email.toLowerCase();
+
+        // Send back user info
+        res.status(201).json({
+            id: result.insertId,
+            name: name.trim(),
+            email: email.toLowerCase()
+        });
+
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({ error: 'Something went wrong. Please try again.' });
     }
-    
-    // stores hashed nasword
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const newUser = {
-        id: Date.now(),
-        name: name,
-        email: email,
-        password: hashedPassword
-    };
-    
-    users.push(newUser);
-    writeJSON(USERS_FILE, users);
-    
-    res.status(201).json({ id: newUser.id, name: newUser.name, email: newUser.email });
 });
 
-// POST /auth/login — verify credentials
+// POST /auth/login — verify credentials and start session
 app.post('/auth/login', async function(req, res) {
-    const users = readJSON(USERS_FILE);
-    const { email, password } = req.body;
-    
-    const user = users.find(function(u) { return u.email === email; });
-    if (!user) {
-        return res.status(401).json({ error: 'Invalid email or password.' });
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required.' });
+        }
+
+        // Find the user by email
+        const [rows] = await db.execute(
+            'SELECT id, name, email, password FROM users WHERE email = ?',
+            [email.toLowerCase()]
+        );
+
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Invalid email or password.' });
+        }
+
+        const user = rows[0];
+
+        // Compare the entered password against the stored hash
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid email or password.' });
+        }
+
+        // Credentials verified — set up the session
+        req.session.userId = user.id;
+        req.session.userName = user.name;
+        req.session.userEmail = user.email;
+
+        res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email
+        });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Something went wrong. Please try again.' });
     }
-    
-    // compares hashed tpyed password, and existing hashed password
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    
-    if (!passwordMatch) {
-        return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-    
-    res.json({ id: user.id, name: user.name, email: user.email });
 });
 
-// Start the server 
+// POST /auth/logout — destroy the session
+app.post('/auth/logout', function(req, res) {
+    req.session.destroy(function(err) {
+        if (err) {
+            return res.status(500).json({ error: 'Logout failed.' });
+        }
+        // Remove cookie from browser
+        res.clearCookie('connect.sid');
+
+        res.json({ message: 'Logged out successfully.' });
+    });
+});
+
+// GET /auth/me — check if someone is currently logged in, called on page load
+app.get('/auth/me', function(req, res) {
+    if (!req.session.userId) {
+        return res.status(401).json({ error: 'Not logged in.' });
+    }
+    res.json({
+        id: req.session.userId,
+        name: req.session.userName,
+        email: req.session.userEmail
+    });
+});
+
+// GET /books — return all books for the logged-in user
+app.get('/books', requireAuth, async function(req, res) {
+    try {
+        const [rows] = await db.execute(
+            'SELECT * FROM books WHERE user_id = ? ORDER BY created_at DESC',
+            [req.session.userId]
+        );
+        
+        res.json(rows);
+    } catch (error) {
+        console.error('Get books error:', error);
+        res.status(500).json({ error: 'Failed to retrieve books.' });
+    }
+});
+
+// POST /books — create a new book
+app.post('/books', requireAuth, async function(req, res) {
+    try {
+        const { title, author, genre, status, pages, notes, wishlist, cover_url } = req.body;
+
+        if (!title || !author) {
+            return res.status(400).json({ error: 'Title and author are required.' });
+        }
+
+        const [result] = await db.execute(
+            `INSERT INTO books (user_id, title, author, genre, status, pages, notes, wishlist, cover_url)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                req.session.userId,
+                title,
+                author,
+                genre || null,
+                status || null,
+                pages || null,
+                notes || null,
+                wishlist || false,
+                cover_url || null
+            ]
+        );
+
+        const [newBook] = await db.execute(
+            'SELECT * FROM books WHERE id = ?',
+            [result.insertId]
+        );
+
+        res.status(201).json(newBook[0]);
+
+    } catch (error) {
+        console.error('Create book error:', error);
+        res.status(500).json({ error: 'Failed to create book.' });
+    }
+});
+
+// PUT /books/:id — update a book
+app.put('/books/:id', requireAuth, async function(req, res) {
+    try {
+        const bookId = Number(req.params.id);
+        const { title, author, genre, status, pages, notes, wishlist, cover_url } = req.body;
+
+        // Check the book exists AND belongs to the logged-in user
+        const [existing] = await db.execute(
+            'SELECT id FROM books WHERE id = ? AND user_id = ?',
+            [bookId, req.session.userId]
+        );
+
+        if (existing.length === 0) {
+            return res.status(404).json({ error: 'Book not found.' });
+        }
+
+        await db.execute(
+            `UPDATE books SET
+                title = ?, author = ?, genre = ?, status = ?,
+                pages = ?, notes = ?, wishlist = ?, cover_url = ?
+             WHERE id = ? AND user_id = ?`,
+            [title, author, genre, status, pages, notes, wishlist, cover_url, bookId, req.session.userId]
+        );
+
+        const [updated] = await db.execute(
+            'SELECT * FROM books WHERE id = ?',
+            [bookId]
+        );
+
+        res.json(updated[0]);
+
+    } catch (error) {
+        console.error('Update book error:', error);
+        res.status(500).json({ error: 'Failed to update book.' });
+    }
+});
+
+// DELETE /books/:id — delete a book
+app.delete('/books/:id', requireAuth, async function(req, res) {
+    try {
+        const bookId = Number(req.params.id);
+
+        const [result] = await db.execute(
+            'DELETE FROM books WHERE id = ? AND user_id = ?',
+            [bookId, req.session.userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Book not found.' });
+
+        }
+
+        res.json({ message: 'Book deleted.' });
+
+    } catch (error) {
+        console.error('Delete book error:', error);
+        res.status(500).json({ error: 'Failed to delete book.' });
+    }
+});
+
+// --- Start Server ---
 app.listen(PORT, function() {
     console.log('Library server running at http://localhost:' + PORT);
 });

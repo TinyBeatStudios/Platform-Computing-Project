@@ -1,12 +1,12 @@
 [
   {
-    "title": "Test Book",
+    "title": "Test Book Eddited",
     "author": "Test Author",
     "genre": "Science Fiction",
     "status": "In-Progress",
     "wishlist": false,
     "pages": "123",
-    "notes": "",
+    "notes": "Some test notes added after the fact",
     "id": 1777875817515
   }
 ]

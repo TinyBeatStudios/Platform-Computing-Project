@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - Sign Up</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <style>
+        .auth-card {
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(24px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .form-input {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(202, 89, 149, 0.15);
+        }
+        .field-error {
+            border-color: #C94040 !important;
+            box-shadow: 0 0 0 3px rgba(201, 64, 64, 0.1) !important;
+        }
+
+        /* Password strength bar */
+        #strength-bar {
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-[#FFF1D3] min-h-screen flex items-center justify-center px-4 py-10">
+
+    <div class="auth-card bg-white rounded-2xl shadow-xl w-full max-w-md p-10">
+
+        <div class="text-center mb-8">
+            <h1 class="text-[#5D1C6A] text-3xl font-bold">Create an Account</h1>
+            <p class="text-[#9E8FA0] mt-2 text-sm">Start your own personal Library! ^^</p>
+        </div>
+
+        <div id="error-box" class="hidden bg-red-50 border border-[#C94040] text-[#C94040] rounded-xl px-4 py-3 mb-5 text-sm leading-relaxed"></div>
+
+        <!-- Name -->
+        <div class="mb-4">
+            <label for="name" class="block text-[#2D1040] text-sm font-medium mb-1">Your Name</label>
+            <input id="name" type="text" autocomplete="name" placeholder="John" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] placeholder-[#9E8FA0] focus:outline-none focus:border-[#CA5995]">
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+            <label for="email" class="block text-[#2D1040] text-sm font-medium mb-1">Email Address</label>
+            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] placeholder-[#9E8FA0] focus:outline-none focus:border-[#CA5995]">
+        </div>
+
+        <!-- Password with strength meter -->
+        <div class="mb-4">
+            <label for="password" class="block text-[#2D1040] text-sm font-medium mb-1">Password</label>
+            <input id="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] focus:outline-none focus:border-[#CA5995]">
+            
+            <!-- Password Strength bar -->
+            <div class="mt-2 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div id="strength-bar" class="h-full w-0 rounded-full"></div>
+            </div>
+            <p id="strength-label" class="text-xs mt-1 h-4"></p>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="mb-6">
+            <label for="confirm-password" class="block text-[#2D1040] text-sm font-medium mb-1">Confirm Password</label>
+            <input id="confirm-password" type="password" autocomplete="new-password" placeholder="Same password again" class="form-input w-full border border-[#FFB090] rounded-xl px-4 py-2.5 text-[#2D1040] focus:outline-none focus:border-[#CA5995]">
+            <p id="match-label" class="text-xs mt-1 h-4"></p>
+        </div>
+
+        <button id="signup-btn"class="w-full bg-[#CA5995] text-white py-3 rounded-xl font-semibold hover:bg-[#5D1C6A] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed">Create Account
+        </button>
+
+        <p class="text-center text-[#9E8FA0] text-sm mt-6">
+            Already have an account? :O
+            <a href="login.html" class="text-[#CA5995] hover:text-[#5D1C6A] font-medium transition-colors">Sign in!>:D</a>
+        </p>
+
+    </div>
+
+    <script src="JS/signup.js"></script>
+</body>
+</html>
