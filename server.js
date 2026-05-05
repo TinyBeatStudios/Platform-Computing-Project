@@ -265,8 +265,9 @@ app.put('/books/:id', requireAuth, async function(req, res) {
             `UPDATE books SET
                 title = ?, author = ?, genre = ?, status = ?,
                 pages = ?, notes = ?, wishlist = ?, cover_url = ?
-             WHERE id = ? AND user_id = ?`,
-            [title, author, genre, status, pages, notes, wishlist, cover_url, bookId, req.session.userId]
+            WHERE id = ? AND user_id = ?`,
+            // Add || null to cover_url so it sends null instead of undefined
+            [title, author, genre, status, pages, notes, wishlist, cover_url || null, bookId, req.session.userId]
         );
 
         const [updated] = await db.execute(

@@ -575,7 +575,7 @@ function runBookSearch() {
             q: query,
             maxResults: 8,
             printType: 'books',
-            key: 'AIzaSyDfKWb2FAHzPu5-gbVRprL5XvK9dNhcQzA'
+            key: 'your-google-api-key-here'
             // URL query parameters: ?q=Dune&maxResults=8&printType=books
         },
         success: function(response) {
